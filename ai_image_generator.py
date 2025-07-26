@@ -338,7 +338,8 @@ Please ensure the response is valid JSON format."""
                     'image': (prepared_image_path, image_file, 'image/png'),
                     'prompt': (None, edit_prompt),
                     'n': (None, '1'),
-                    'size': (None, '1024x1024')
+                    'size': (None, '1024x1024'),
+                    'model': (None, 'gpt-image-1')
                 }
                 
                 # Make API call
