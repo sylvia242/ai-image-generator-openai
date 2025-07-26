@@ -1,0 +1,456 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop This Look - Bohemian Style</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .header .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        
+        .summary {
+            display: flex;
+            justify-content: space-around;
+            background: #34495e;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .summary-item {
+            text-align: center;
+        }
+        
+        .summary-item .number {
+            font-size: 2em;
+            font-weight: bold;
+            display: block;
+        }
+        
+        .summary-item .label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 3px solid #ecf0f1;
+        }
+        
+        .product-info {
+            padding: 20px;
+        }
+        
+        .product-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .product-priority {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .priority-High {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .priority-Medium {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .priority-Low {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .product-description {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+        
+        .retailer-options {
+            border-top: 1px solid #ecf0f1;
+            padding-top: 15px;
+        }
+        
+        .retailer-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+        
+        .retailer-option:hover {
+            background: #e9ecef;
+        }
+        
+        .retailer-info {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+        }
+        
+        .retailer-logo {
+            width: 40px;
+            height: 30px;
+            object-fit: contain;
+            margin-right: 12px;
+        }
+        
+        .retailer-details {
+            flex-grow: 1;
+        }
+        
+        .retailer-name {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .retailer-rating {
+            font-size: 0.8em;
+            color: #7f8c8d;
+        }
+        
+        .price-info {
+            text-align: right;
+        }
+        
+        .current-price {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #27ae60;
+        }
+        
+        .original-price {
+            font-size: 0.9em;
+            color: #95a5a6;
+            text-decoration: line-through;
+        }
+        
+        .shipping {
+            font-size: 0.8em;
+            color: #7f8c8d;
+        }
+        
+        .shop-button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s ease;
+        }
+        
+        .shop-button:hover {
+            transform: scale(1.05);
+            text-decoration: none;
+            color: white;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-top: 30px;
+        }
+        
+        .generated-info {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+        
+        .disclaimer {
+            font-size: 0.8em;
+            color: #95a5a6;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .summary {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛍️ Shop This Look</h1>
+            <div class="subtitle">Bohemian Style Interior Design</div>
+            <p><strong>Generated from:</strong> comprehensive_variation_20250725_184521.png</p>
+        </div>
+        
+        <div class="summary">
+            <div class="summary-item">
+                <span class="number">5</span>
+                <span class="label">Products</span>
+            </div>
+            <div class="summary-item">
+                <span class="number">$379</span>
+                <span class="label">Est. Total</span>
+            </div>
+            <div class="summary-item">
+                <span class="number">2</span>
+                <span class="label">High Priority</span>
+            </div>
+        </div>
+        
+        <div class="products-grid">
+
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&h=300&fit=crop" alt="Fancy Homi Sage Green Decorative Throw Pillow Covers" class="product-image" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjVGNUY1Ii8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiPkltYWdlIE5vdCBBdmFpbGFibGU8L3RleHQ+Cjwvc3ZnPg=='">
+                <div class="product-info">
+                    <div class="product-name">Fancy Homi Sage Green Decorative Throw Pillow Covers</div>
+                    <span class="product-priority priority-High">High Priority</span>
+                    <div class="product-description">Bohemian decorative pillows in terracotta and teal to add instant comfort and style to your seating area</div>
+                    
+                    <div class="retailer-options">
+
+                        <div class="retailer-option">
+                            <div class="retailer-info">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon" class="retailer-logo" onerror="this.style.display='none'">
+                                <div class="retailer-details">
+                                    <div class="retailer-name">Amazon</div>
+                                    <div class="retailer-rating">⭐ 4.3 (127 reviews)</div>
+                                </div>
+                            </div>
+                            <div class="price-info">
+                                <div class="original-price">$29.99</div>
+                                <div class="current-price">$24.99</div>
+                                <div class="shipping">$5.99 shipping</div>
+                                <a href="https://www.amazon.com/Fancy-Homi-Decorative-Corduroy-Farmhouse/dp/B09XMHKDCW" target="_blank" class="shop-button">Shop Now</a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop" alt="Modern Boho Rattan Floor Lamp" class="product-image" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjVGNUY1Ii8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiPkltYWdlIE5vdCBBdmFpbGFibGU8L3RleHQ+Cjwvc3ZnPg=='">
+                <div class="product-info">
+                    <div class="product-name">Modern Boho Rattan Floor Lamp</div>
+                    <span class="product-priority priority-High">High Priority</span>
+                    <div class="product-description">Bohemian floor lamp featuring rattan to create ambient lighting and enhance your room's atmosphere</div>
+                    
+                    <div class="retailer-options">
+
+                        <div class="retailer-option">
+                            <div class="retailer-info">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon" class="retailer-logo" onerror="this.style.display='none'">
+                                <div class="retailer-details">
+                                    <div class="retailer-name">Amazon</div>
+                                    <div class="retailer-rating">⭐ 4.2 (156 reviews)</div>
+                                </div>
+                            </div>
+                            <div class="price-info">
+                                <div class="original-price">$109.99</div>
+                                <div class="current-price">$89.99</div>
+                                <div class="shipping">Free shipping</div>
+                                <a href="https://www.amazon.com/dp/B08N5WRWNW" target="_blank" class="shop-button">Shop Now</a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=300&fit=crop" alt="Rattan Lantern Ceiling Pendant Brass - Threshold™" class="product-image" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjVGNUY1Ii8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiPkltYWdlIE5vdCBBdmFpbGFibGU8L3RleHQ+Cjwvc3ZnPg=='">
+                <div class="product-info">
+                    <div class="product-name">Rattan Lantern Ceiling Pendant Brass - Threshold™</div>
+                    <span class="product-priority priority-Medium">Medium Priority</span>
+                    <div class="product-description">Bohemian wall art in terracotta and teal to create a stunning focal point and tie your design together</div>
+                    
+                    <div class="retailer-options">
+
+                        <div class="retailer-option">
+                            <div class="retailer-info">
+                                <img src="https://corporate.target.com/_media/TargetCorp/about/logos/target-bullseye-logo_red.png" alt="Target" class="retailer-logo" onerror="this.style.display='none'">
+                                <div class="retailer-details">
+                                    <div class="retailer-name">Target</div>
+                                    <div class="retailer-rating">⭐ 4.5 (68 reviews)</div>
+                                </div>
+                            </div>
+                            <div class="price-info">
+                                
+                                <div class="current-price">$85.00</div>
+                                <div class="shipping">Free shipping</div>
+                                <a href="https://www.target.com/p/rattan-lantern-ceiling-pendant-brass-threshold-8482-designed-with-studio-mcgee/-/A-83122035" target="_blank" class="shop-button">Shop Now</a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=300&h=300&fit=crop" alt="SIDUCAL Ceramic Rustic Farmhouse Vase" class="product-image" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjVGNUY1Ii8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiPkltYWdlIE5vdCBBdmFpbGFibGU8L3RleHQ+Cjwvc3ZnPg=='">
+                <div class="product-info">
+                    <div class="product-name">SIDUCAL Ceramic Rustic Farmhouse Vase</div>
+                    <span class="product-priority priority-Medium">Medium Priority</span>
+                    <div class="product-description">Handcrafted ceramic vases in terracotta and teal featuring rattan for displaying flowers or as standalone decor</div>
+                    
+                    <div class="retailer-options">
+
+                        <div class="retailer-option">
+                            <div class="retailer-info">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon" class="retailer-logo" onerror="this.style.display='none'">
+                                <div class="retailer-details">
+                                    <div class="retailer-name">Amazon</div>
+                                    <div class="retailer-rating">⭐ 4.5 (89 reviews)</div>
+                                </div>
+                            </div>
+                            <div class="price-info">
+                                
+                                <div class="current-price">$32.99</div>
+                                <div class="shipping">$5.99 shipping</div>
+                                <a href="https://www.amazon.com/dp/B0BXGLNSYY" target="_blank" class="shop-button">Shop Now</a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&h=300&fit=crop" alt="Area rug" class="product-image" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjVGNUY1Ii8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiPkltYWdlIE5vdCBBdmFpbGFibGU8L3RleHQ+Cjwvc3ZnPg=='">
+                <div class="product-info">
+                    <div class="product-name">Area rug</div>
+                    <span class="product-priority priority-Low">Low Priority</span>
+                    <div class="product-description">Bohemian area rug in terracotta and teal to define your space and add warmth underfoot</div>
+                    
+                    <div class="retailer-options">
+
+                        <div class="retailer-option">
+                            <div class="retailer-info">
+                                <img src="https://corporate.target.com/_media/TargetCorp/about/logos/target-bullseye-logo_red.png" alt="Target" class="retailer-logo" onerror="this.style.display='none'">
+                                <div class="retailer-details">
+                                    <div class="retailer-name">Target</div>
+                                    <div class="retailer-rating">⭐ 5.0 (106 reviews)</div>
+                                </div>
+                            </div>
+                            <div class="price-info">
+                                
+                                <div class="current-price">$145.69</div>
+                                <div class="shipping">Free shipping</div>
+                                <a href="https://www.target.com/s?searchTerm=Area+rug+bohemian" target="_blank" class="shop-button">Shop Now</a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        
+        <div class="footer">
+            <div class="generated-info">
+                <strong>Generated:</strong> July 25, 2025 at 09:04 PM<br>
+                <strong>Style:</strong> Bohemian Interior Design
+            </div>
+            <div class="disclaimer">
+                * Prices and availability are estimates. Actual prices may vary. 
+                Product images are for illustration purposes and may not represent exact items.
+                Links lead to specific products or curated search results.
+            </div>
+        </div>
+    </div>
+</body>
+</html>
