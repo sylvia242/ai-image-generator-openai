@@ -400,6 +400,13 @@ CRITICAL INSTRUCTIONS:
         """Complete real products pathway design generation: analyze + search + multi-image integration"""
         
         try:
+            # Create output directory first (before any product searches)
+            base_image_name = os.path.splitext(os.path.basename(image_path))[0]
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            output_dir = f"serpapi_products/{base_image_name}_{timestamp}"
+            os.makedirs(output_dir, exist_ok=True)
+            print(f"📁 Created output directory: {output_dir}")
+            
             print("🔍 Step 1: Analyzing original image with GPT-4o Vision...")
             
             # Step 1: Analyze the original image
@@ -465,19 +472,13 @@ CRITICAL INSTRUCTIONS:
             
             print(f"   🎉 Found {len(real_products_with_images)} products with images")
             
-            # Limit to 15 products maximum for better performance
-            if len(real_products_with_images) > 15:
-                print(f"   ⚠️  Limiting to first 15 products (found {len(real_products_with_images)})")
-                real_products_with_images = real_products_with_images[:15]
+            # Limit to 8 products maximum for better performance and faster processing
+            if len(real_products_with_images) > 8:
+                print(f"   ⚠️  Limiting to first 8 products (found {len(real_products_with_images)})")
+                real_products_with_images = real_products_with_images[:8]
             
             # Step 4: Create composite layout with base image and products
             print("🎨 Step 4: Creating composite layout with base image and products...")
-            
-            # Create output directory based on input image name
-            base_image_name = os.path.splitext(os.path.basename(image_path))[0]
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            output_dir = f"serpapi_products/{base_image_name}_{timestamp}"
-            os.makedirs(output_dir, exist_ok=True)
             
             # Get product image paths
             product_image_paths = [p['permanent_image_path'] for p in real_products_with_images]

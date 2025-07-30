@@ -136,7 +136,7 @@ class SerpAPIShopping:
             query = f"{query} {enhancement}"
         
         # Limit to 15 products maximum for better performance
-        return self.search_products(query, max_results=15)
+        return self.search_products(query, max_results=10)
     
     def download_product_image(self, image_url: str, product_name: str, output_dir: str = None) -> Optional[str]:
         """
