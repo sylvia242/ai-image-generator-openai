@@ -20,9 +20,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+from starlette.responses import Response
 
 from src.core.ai_image_generator import AIImageGenerator
-from src.core.standard_pathway import StandardPathway
 from src.core.real_products_pathway import RealProductsPathway
 from config.config_settings import get_api_key, get_serpapi_key
 
@@ -51,15 +51,13 @@ class AnalysisRequest(BaseModel):
     custom_instructions: Optional[str] = ""
     design_type: str = "interior redesign"
 
-class StandardPathwayRequest(BaseModel):
-    design_style: str
-    custom_instructions: Optional[str] = ""
-    design_type: str = "interior redesign"
+
 
 class RealProductsRequest(BaseModel):
     design_style: str
     custom_instructions: Optional[str] = ""
     design_type: str = "interior redesign"
+    fast_mode: Optional[bool] = False
 
 class APIResponse(BaseModel):
     success: bool
@@ -161,63 +159,15 @@ async def analyze_image(
         
         raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
 
-@app.post("/generate-standard")
-async def generate_standard_pathway(
-    file: UploadFile = File(...),
-    design_style: str = Form(...),
-    custom_instructions: str = Form(""),
-    design_type: str = Form("interior redesign")
-):
-    """Generate design using standard pathway (AI-imagined products)"""
-    
-    if not openai_key:
-        raise HTTPException(status_code=500, detail="OpenAI API key not configured")
-    
-    try:
-        # Save uploaded file temporarily
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as temp_file:
-            shutil.copyfileobj(file.file, temp_file)
-            temp_path = temp_file.name
-        
-        # Initialize standard pathway
-        standard_pathway = StandardPathway(openai_key)
-        
-        # Generate design
-        results = standard_pathway.generate_design(
-            image_path=temp_path,
-            design_style=design_style,
-            custom_instructions=custom_instructions,
-            design_type=design_type
-        )
-        
-        # Clean up temp file
-        os.unlink(temp_path)
-        
-        if not results:
-            raise HTTPException(status_code=500, detail="Standard pathway generation failed")
-        
-        return APIResponse(
-            success=True,
-            message="Standard pathway generation completed successfully",
-            data=results
-        )
-        
-    except Exception as e:
-        # Clean up temp file if it exists
-        if 'temp_path' in locals():
-            try:
-                os.unlink(temp_path)
-            except:
-                pass
-        
-        raise HTTPException(status_code=500, detail=f"Generation failed: {str(e)}")
+
 
 @app.post("/generate-real-products")
 async def generate_real_products_pathway(
     file: UploadFile = File(...),
     design_style: str = Form(...),
     custom_instructions: str = Form(""),
-    design_type: str = Form("interior redesign")
+    design_type: str = Form("interior redesign"),
+    fast_mode: bool = Form(False)
 ):
     """Generate design using real products pathway"""
     
@@ -234,7 +184,7 @@ async def generate_real_products_pathway(
             temp_path = temp_file.name
         
         # Initialize real products pathway
-        real_products_pathway = RealProductsPathway(openai_key)
+        real_products_pathway = RealProductsPathway(openai_key, fast_mode=fast_mode)
         
         # Generate design with real products
         results = real_products_pathway.generate_design_with_real_products(
@@ -242,7 +192,8 @@ async def generate_real_products_pathway(
             design_style=design_style,
             custom_instructions=custom_instructions,
             design_type=design_type,
-            serpapi_key=serpapi_key
+            serpapi_key=serpapi_key,
+            fast_mode=fast_mode
         )
         
         # Clean up temp file
@@ -313,13 +264,38 @@ async def get_shopping_list(filename: str):
     
     return FileResponse(filepath, media_type="text/html")
 
-@app.get("/images/{filepath:path}")
-async def get_image(filepath: str):
-    """Serve generated images"""
-    if not os.path.exists(filepath):
-        raise HTTPException(status_code=404, detail="Image not found")
-    
-    return FileResponse(filepath)
+@app.get("/images/{file_path:path}")
+async def get_image(file_path: str):
+    """Serve images from the serpapi_products directory"""
+    try:
+        # Construct the full path to the image
+        image_path = os.path.join(os.getcwd(), file_path)
+        
+        # Security check: ensure the path is within the serpapi_products directory
+        if not file_path.startswith('serpapi_products/'):
+            raise HTTPException(status_code=403, detail="Access denied")
+        
+        # Check if file exists
+        if not os.path.exists(image_path):
+            raise HTTPException(status_code=404, detail="Image not found")
+        
+        # Determine content type based on file extension
+        content_type = "image/jpeg"  # Default
+        if file_path.lower().endswith('.png'):
+            content_type = "image/png"
+        elif file_path.lower().endswith('.jpg') or file_path.lower().endswith('.jpeg'):
+            content_type = "image/jpeg"
+        
+        # Read and return the image
+        with open(image_path, "rb") as f:
+            image_data = f.read()
+        
+        return Response(content=image_data, media_type=content_type)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error serving image: {str(e)}")
 
 if __name__ == "__main__":
     import uvicorn

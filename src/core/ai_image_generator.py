@@ -9,9 +9,11 @@ import json
 import argparse
 from typing import Dict, Any
 from datetime import datetime
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config.config_settings import get_api_key, get_serpapi_key
-from .standard_pathway import StandardPathway
-from .real_products_pathway import RealProductsPathway
+from src.core.real_products_pathway import RealProductsPathway
 
 
 class AIImageGenerator:
@@ -20,7 +22,6 @@ class AIImageGenerator:
     def __init__(self, api_key: str):
         """Initialize the AI Image Generator with OpenAI API key"""
         self.api_key = api_key
-        self.standard_pathway = StandardPathway(api_key)
         self.real_products_pathway = RealProductsPathway(api_key)
     
     def generate_design(self, 
@@ -30,27 +31,28 @@ class AIImageGenerator:
                        design_type: str = "interior redesign",
                        edit_mode: str = "edit",
                        num_variations: int = 1) -> Dict[str, Any]:
-        """Generate design using standard pathway (AI-imagined products)"""
-        return self.standard_pathway.generate_design(
+        """Generate design using real products pathway"""
+        return self.real_products_pathway.generate_design_with_real_products(
             image_path=image_path,
             design_style=design_style,
             custom_instructions=custom_instructions,
             design_type=design_type,
-            edit_mode=edit_mode,
-            num_variations=num_variations
+            serpapi_key=get_serpapi_key()
         )
     
     def generate_design_with_real_products(self, 
                                          image_path: str, 
                                          design_style: str = "modern",
                                          custom_instructions: str = "",
-                                         design_type: str = "interior redesign") -> Dict[str, Any]:
+                                         design_type: str = "interior redesign",
+                                         fast_mode: bool = False) -> Dict[str, Any]:
         """Generate design using real products pathway (actual product images)"""
         return self.real_products_pathway.generate_design_with_real_products(
             image_path=image_path,
             design_style=design_style,
             custom_instructions=custom_instructions,
-            design_type=design_type
+            design_type=design_type,
+            fast_mode=fast_mode
         )
     
     def save_results(self, results: Dict[str, Any], output_file: str = "design_results.json"):
@@ -127,8 +129,9 @@ def main():
     parser.add_argument("--no-save", action="store_true", help="Don't save results to file")
     parser.add_argument("--analysis-only", action="store_true", help="Only analyze, don't transform image")
     parser.add_argument("--mode", choices=["edit", "variations"], default="edit", help="Transformation mode: edit (modify based on analysis) or variations (create style variations)")
-    parser.add_argument("--pathway", choices=["standard", "real_products"], default="standard", help="Design pathway: standard (AI imagined products) or real_products (use actual product images)")
+    parser.add_argument("--pathway", choices=["standard", "real_products"], default="real_products", help="Design pathway: real_products (use actual product images)")
     parser.add_argument("--variations", type=int, default=1, help="Number of variations to create (1-4, only used with --mode variations)")
+    parser.add_argument("--fast", action="store_true", help="Enable fast mode for quicker processing (reduced quality)")
     
     args = parser.parse_args()
     
@@ -154,6 +157,10 @@ def main():
         print(f"🎨 Design style: {args.style}")
         print(f"📝 Design type: {args.type}")
         print(f"🤖 Using: OpenAI GPT-4o Vision + Image Edit API")
+        if args.fast:
+            print(f"⚡ Fast mode: ENABLED (quicker processing, reduced quality)")
+        else:
+            print(f"⚡ Fast mode: DISABLED (full quality processing)")
         if args.instructions:
             print(f"💭 Custom instructions: {args.instructions}")
         
@@ -172,7 +179,8 @@ def main():
                 image_path=args.image_path,
                 design_style=args.style,
                 custom_instructions=args.instructions,
-                design_type=args.type
+                design_type=args.type,
+                fast_mode=args.fast
             )
         else:
             print("🎨 Using standard pathway...")

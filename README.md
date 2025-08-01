@@ -35,29 +35,47 @@ This Python script is based on the prompt structure from the HostLux AI Interior
 
 ## Usage
 
-### Basic Usage
+### Quick Start
 ```bash
-python ai_image_generator.py path/to/your/image.jpg
+# Run examples interactively
+./scripts/run_examples.sh
+
+# Or run specific examples
+python3 examples/example_real_products.py
 ```
 
-### Advanced Usage
+### Main Examples
+
+#### **Real Products Pathway (SerpAPI products)**
 ```bash
-python ai_image_generator.py path/to/your/image.jpg \
-  --style "scandinavian" \
-  --instructions "Focus on sustainable materials and natural lighting" \
-  --type "living room redesign" \
-  --output "my_design_results.json"
+python3 examples/example_real_products.py
 ```
 
-### Command Line Options
+#### **Performance Tracking**
+```bash
+python3 examples/performance/test_performance_tracking.py
+```
 
-- `image_path`: Path to the image file to analyze (required)
-- `--api-key`: OpenAI API key (optional if set as environment variable)
-- `--style`: Design style (default: "modern")
-- `--instructions`: Custom design instructions (optional)
-- `--type`: Type of design project (default: "interior redesign")
-- `--output`: Output JSON file name (default: "design_results.json")
-- `--no-save`: Don't save results to file (optional)
+### API Server
+```bash
+python3 api_server.py
+```
+
+### Debug Image Generation
+```bash
+python3 tests/test_image_generation_debug.py
+```
+
+### Fast Mode
+```bash
+# Quick processing with reduced quality
+python3 src/core/ai_image_generator.py your_image.jpg --fast
+
+# Full quality processing (default)
+python3 src/core/ai_image_generator.py your_image.jpg
+```
+
+See [FAST_MODE_GUIDE.md](FAST_MODE_GUIDE.md) for detailed information about fast mode.
 
 ### Supported Design Styles
 

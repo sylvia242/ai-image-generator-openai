@@ -6,14 +6,17 @@ All prompts are centralized here for easy editing and maintenance
 
 def create_analysis_prompt(design_style: str = "modern", 
                           custom_instructions: str = "",
-                          design_type: str = "interior redesign") -> str:
+                          design_type: str = "interior redesign",
+                          room_type: str = "") -> str:
     """Create the AI prompt for image analysis"""
+    
+    room_context = f"Room Type: {room_type.replace('-', ' ').title()}\n" if room_type else ""
     
     prompt = f"""As a professional design expert, analyze the provided image and create a detailed design transformation plan. Here are the requirements:
 
-Design Style: {design_style}
+{room_context}Design Style: {design_style}
 Design Type: {design_type}
-Custom Instructions: {custom_instructions if custom_instructions else 'Create an appealing and functional design'}
+Custom Instructions: {custom_instructions if custom_instructions else 'Create a comprehensive design transformation with multiple product categories including plants, artwork, storage, lighting, textiles, books, and decorative accessories for styling shelves, tables, and consoles'}
 
 IMPORTANT: I have uploaded an image of the current space/object. Please carefully analyze this image to understand:
 - Current layout, structure, and spatial arrangements
@@ -23,7 +26,24 @@ IMPORTANT: I have uploaded an image of the current space/object. Please carefull
 - Functional aspects and flow
 - Style and aesthetic elements
 
-DESIGN PHILOSOPHY: Focus on enhancing the existing space through strategic additions and modifications rather than complete furniture replacement. Emphasize decorative elements, accessories, lighting, textiles, and styling that can transform the space while working with existing furniture pieces.
+DESIGN PHILOSOPHY: Focus on creating a comprehensive design transformation through strategic additions and styling enhancements. 
+Emphasize a wide variety of decorative elements, accessories, lighting, textiles, plants, artwork, storage solutions, books, and styling elements that can transform the space into a well-curated, lived-in environment. Pay special attention to styling empty or sparse shelves, surfaces, and consoles with carefully selected decorative items.
+
+COMPREHENSIVE PRODUCT CATEGORIES: Include a wide variety of product categories to create a complete design transformation:
+- Plants (indoor plants, planters, plant stands, hanging plants)
+- Artwork (wall art, prints, paintings, photography, sculptural pieces)
+- Storage (decorative baskets, storage ottomans, floating shelves, bookcases, console organization)
+- Lighting (table lamps, floor lamps, pendant lights, accent lighting, candles, string lights)
+- Textiles (throw pillows, blankets, curtains, rugs, table runners, wall hangings)
+- Books (decorative books, coffee table books, bookends)
+- Decor for tables, shelves, and consoles (vases, decorative objects, trays, bowls, candlesticks, picture frames)
+- Functional accessories (mirrors, clocks, decorative hardware)
+
+STYLING GUIDELINES: 
+- If shelves or surfaces appear unstyled or sparse, suggest specific styling elements to make them more visually appealing
+- Even if items already exist in a category, you can suggest additional complementary items from the same category to enhance the overall design
+- Focus on layering and creating visual interest through varied heights, textures, and groupings
+- Consider seasonal or themed styling opportunities
 
 Based on your analysis, please provide:
 1. A detailed assessment of the current state
@@ -34,9 +54,27 @@ Based on your analysis, please provide:
 6. Estimated transformation impact and benefits
 
 RECOMMENDATION PRIORITIES:
-- HIGH: Essential changes for immediate impact (lighting, key decor pieces, color accents)
-- MEDIUM: Important enhancements (textiles, additional accessories, minor furniture adjustments)
-- LOW: Nice-to-have finishing touches (artwork, plants, small decorative objects)
+- HIGH: Essential changes for immediate impact (lighting, plants, key artwork, textiles, storage solutions)
+- MEDIUM: Important enhancements (decorative accessories, books, styling elements for shelves and surfaces, additional textiles)
+- LOW: Nice-to-have finishing touches (candles, small decorative objects, seasonal elements)
+
+COMPREHENSIVE STYLING APPROACH: Always include recommendations from multiple categories to create a complete, well-styled space. Aim for 8-12 different product types minimum to provide sufficient variety and styling options.
+
+EXISTING ELEMENT ANALYSIS:
+Before making recommendations, carefully identify and list all existing elements in the room:
+- Existing furniture pieces and their condition
+- Current window treatments (curtains, blinds, etc.)
+- Existing lighting fixtures and their adequacy
+- Current decorative elements and accessories
+- Floor coverings and their condition
+- Wall treatments and artwork
+- Unstyled or sparse areas that need attention (empty shelves, bare surfaces, etc.)
+
+ENHANCEMENT APPROACH: You can suggest items from the same category as existing elements to create layering, visual interest, and improved styling. For example:
+- If there's already one piece of artwork, suggest additional pieces to create a gallery wall
+- If there are some plants, suggest more plants or different types to create a lush environment
+- If shelves exist but appear empty or sparse, suggest specific items to style them beautifully
+- If there's basic lighting, suggest additional accent lighting for ambiance
 
 Focus heavily on suggesting VERY SPECIFIC decorative products with exact details for accurate shopping:
 
@@ -53,6 +91,11 @@ Examples of SPECIFIC recommendations:
 - "Macrame wall hanging, 24x36 inches, natural cotton cord, geometric diamond pattern"
 - "Ceramic vases set of 3, earth tones (terracotta, sage, cream), 6-12 inch heights, matte finish"
 - "Jute area rug, 5x8 feet, natural fiber with geometric border pattern in rust/teal"
+- "Snake plant in 8-inch white ceramic planter, 24-30 inches tall, modern minimalist style"
+- "Set of 3 framed botanical prints, 11x14 inches, black frames, green and white color scheme"
+- "Woven storage baskets set of 2, natural rattan, 12-inch and 10-inch diameter, with handles"
+- "Coffee table books set of 3, architecture and design themes, hardcover, neutral spines"
+- "Brass candlestick holders set of 3, varying heights 6-10 inches, vintage inspired"
 
 Only suggest furniture replacement as a last resort - instead focus on how to style, accessorize, or modify existing pieces with SPECIFIC PRODUCTS.
 
@@ -82,41 +125,27 @@ Format the response as JSON with this exact structure:
     }},
     "materials": ["list", "of", "materials"],
     "lighting": "lighting recommendations",
-    "styling": "styling and decor recommendations"
+    "styling": "styling and decor recommendations",
+    "roomAnalysis": {{
+        "roomType": "specific room type (e.g., 'living room', 'bedroom', 'dining room')",
+        "existingFurniture": ["list of existing furniture pieces"],
+        "existingWindowTreatments": ["list of existing curtains, blinds, or window coverings"],
+        "existingLighting": ["list of existing lighting fixtures"],
+        "existingDecor": ["list of existing decorative elements and accessories"],
+        "existingFloorCoverings": ["list of existing rugs, carpets, or floor treatments"],
+        "existingWallTreatments": ["list of existing wall art, paint, or wall treatments"],
+        "colorScheme": ["current color scheme"],
+        "mood": "overall mood or atmosphere (e.g., 'cozy', 'bright', 'minimalist', 'warm')",
+        "styleDetails": ["specific style elements like 'mid-century', 'industrial', 'coastal']",
+        "architecturalFeatures": ["list of architectural features"],
+        "lightingConditions": "current lighting situation"
+    }}
 }}"""
     
     return prompt
 
 
-def create_standard_pathway_prompt(analysis_results: dict, design_style: str) -> str:
-    """Create prompt for standard pathway (AI-imagined products)"""
-    
-    # Extract key information from analysis
-    recommendations = analysis_results.get('recommendations', [])
-    color_palette = analysis_results.get('colorPalette', {}).get('primary', [])
-    materials = analysis_results.get('materials', [])
-    
-    # Create style-specific instructions
-    style_instruction = f"Transform this room to {design_style} style"
-    
-    # Build comprehensive generation prompt
-    generation_prompt = f"""Transform this interior design to {design_style} style with comprehensive improvements.
 
-STYLE REQUIREMENTS:
-- {style_instruction}
-- Use {', '.join(color_palette) if color_palette else 'appropriate'} color palette
-- Incorporate {', '.join(materials) if materials else 'quality'} materials
-- Maintain professional interior design quality
-- Keep the same room layout and camera perspective
-
-TRANSFORMATION REQUIREMENTS:
-- Implement ALL recommendations with visible changes
-- Allow furniture repositioning, replacement, and restyling as needed
-- Create a cohesive {design_style} aesthetic
-- Maintain the same room layout and camera perspective
-- Create a cohesive {design_style.lower()} aesthetic with professional interior design quality"""
-    
-    return generation_prompt
 
 
 def create_real_products_pathway_prompt(products: list) -> str:
@@ -147,6 +176,8 @@ CRITICAL INSTRUCTIONS:
 - Use the exact products shown in the additional images - do not modify their appearance
 - Place products in realistic, functional positions
 - Keep the overall design cohesive and professional
-- Do not add any other items beyond the specified products"""
+- Do not add any other items beyond the specified products
+- Work with existing elements - if the room already has suitable curtains, lighting, or furniture, integrate new products to complement rather than replace them
+- Focus on enhancing existing elements rather than replacing them"""
     
     return prompt 

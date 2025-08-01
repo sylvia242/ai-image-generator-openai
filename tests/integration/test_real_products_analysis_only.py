@@ -16,6 +16,7 @@ from src.core.real_products_pathway import RealProductsPathway
 from src.shopping.serpapi_shopping_integration import SerpAPIShopping
 from src.shopping.real_products_pathway_shopping_list import create_serpapi_shopping_list
 from config.config_settings import get_api_key, get_serpapi_key
+from src.utils.session_manager import SessionManager
 
 
 def test_real_products_analysis_and_shopping():
@@ -37,6 +38,10 @@ def test_real_products_analysis_and_shopping():
         return False
     
     print("✅ API keys configured")
+    
+    # Initialize SessionManager for organized output
+    session = SessionManager()
+    print(f"📁 Session ID: {session.session_id}")
     
     # Initialize the real products pathway
     real_products_pathway = RealProductsPathway(openai_key)
@@ -99,7 +104,9 @@ def test_real_products_analysis_and_shopping():
             search_results = serpapi_shopping.search_interior_products(
                 product_type=product['type'],
                 style="modern",
-                colors=color_palette
+                colors=color_palette,
+                min_rating=4.0,  # Prefer products with 4+ star ratings
+                min_reviews=10   # Prefer products with 10+ reviews
             )
             
             if search_results:
@@ -136,10 +143,9 @@ def test_real_products_analysis_and_shopping():
         # Step 3: Generate shopping list
         print("\n📝 STEP 3: Generating shopping list...")
         
-        # Save analysis results to JSON for shopping list generation
-        analysis_file = "test_analysis_results.json"
-        with open(analysis_file, 'w') as f:
-            json.dump(analysis_results, f, indent=2)
+        # Save analysis results to session for shopping list generation
+        analysis_file = session.save_file('analysis', 'test_analysis_results.json', 
+                                        content=json.dumps(analysis_results, indent=2))
         
         # Create a results file that includes the real products data
         results_data = {
@@ -159,16 +165,18 @@ def test_real_products_analysis_and_shopping():
             }
         }
         
-        # Save results to JSON file
-        results_file = "test_design_results.json"
-        with open(results_file, 'w') as f:
-            json.dump(results_data, f, indent=2)
+        # Save results to session
+        results_file = session.save_file('analysis', 'test_design_results.json', 
+                                       content=json.dumps(results_data, indent=2))
         
         # Generate the shopping list HTML
         output_file = create_serpapi_shopping_list(results_file)
         
         if output_file:
-            print(f"✅ Shopping list generated: {output_file}")
+            # Save shopping list to session
+            session_shopping_list = session.save_file('shopping_lists', 'shopping_list.html', 
+                                                   source_path=output_file)
+            print(f"✅ Shopping list generated: {session_shopping_list}")
             print(f"✅ Analysis results saved: {analysis_file}")
             print(f"✅ Design results saved: {results_file}")
             
@@ -179,7 +187,11 @@ def test_real_products_analysis_and_shopping():
             print(f"   📝 Shopping List: ✅ Generated")
             print(f"   🖼️  Image Generation: ⏭️  Skipped (as requested)")
             
-            print(f"\n🌐 Open {output_file} in your browser to see the shopping list!")
+            # Create latest symlink for easy access
+            session.create_latest_symlink()
+            print(f"🔗 Latest session symlink created: output/sessions/latest")
+            
+            print(f"\n🌐 Open {session_shopping_list} in your browser to see the shopping list!")
             print(f"📄 Analysis details saved in {analysis_file}")
             
             return True

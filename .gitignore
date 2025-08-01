@@ -109,3 +109,32 @@ fern-project-new-project-8370a695/
 *.key
 *_key.txt
 config.py 
+# Output directories
+output/sessions/*/
+output/temp/*
+!output/sessions/.gitkeep
+!output/temp/.gitkeep
+
+# Keep only important archives
+output/archive/*
+!output/archive/README.md
+
+# Session-specific files
+**/serpapi_product_*.jpg
+**/composite_layout_*.png
+**/real_products_overlay_design_*.png
+**/design_results.json
+**/analysis_results.json
+
+# Debug outputs
+debug_output_*/
+**/debug_*.png
+**/debug_*.jpg
+**/debug_*.json
+
+# Temporary files
+*.tmp
+*.temp
+*_temp.*
+
+revibe-my-space/

@@ -13,6 +13,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.core.real_products_pathway import RealProductsPathway
 from config.config_settings import get_api_key, get_serpapi_key
+from src.utils.session_manager import SessionManager
 
 
 def main():
@@ -34,6 +35,10 @@ def main():
         return
     
     print("✅ API keys configured")
+    
+    # Initialize SessionManager for organized output
+    session = SessionManager()
+    print(f"📁 Session ID: {session.session_id}")
     
     # Initialize the real products pathway
     real_products_pathway = RealProductsPathway(openai_key)
@@ -105,6 +110,12 @@ def main():
         
         print("✅ Design generation completed successfully!")
         
+        # Display session information
+        if 'session_id' in final_results:
+            print(f"\n📁 SESSION INFORMATION:")
+            print(f"   🆔 Session ID: {final_results['session_id']}")
+            print(f"   📂 Session Path: {final_results['session_path']}")
+        
         # Display final results
         if 'serpapiProductsComposition' in final_results:
             comp_info = final_results['serpapiProductsComposition']
@@ -129,10 +140,9 @@ def main():
         # Step 3: Generate shopping list
         print("\n📝 STEP 3: Generating shopping list...")
         
-        # Save results to JSON file for shopping list generation
-        results_file = "example_real_products_results.json"
-        with open(results_file, 'w') as f:
-            json.dump(final_results, f, indent=2)
+        # Save results to session for shopping list generation
+        results_file = session.save_file('analysis', 'example_real_products_results.json', 
+                                       content=json.dumps(final_results, indent=2))
         
         # Import and use the shopping list function
         from src.shopping.real_products_pathway_shopping_list import create_serpapi_shopping_list
@@ -141,7 +151,10 @@ def main():
         shopping_list_file = create_serpapi_shopping_list(results_file)
         
         if shopping_list_file:
-            print(f"✅ Shopping list generated: {shopping_list_file}")
+            # Save shopping list to session
+            session_shopping_list = session.save_file('shopping_lists', 'shopping_list.html', 
+                                                   source_path=shopping_list_file)
+            print(f"✅ Shopping list generated: {session_shopping_list}")
         
         # Display summary
         print(f"\n🎉 PIPELINE COMPLETED SUCCESSFULLY!")
@@ -152,12 +165,16 @@ def main():
         
         print(f"\n📁 Generated Files:")
         print(f"   📄 Analysis: {results_file}")
-        print(f"   🛒 Shopping List: {shopping_list_file}")
+        print(f"   🛒 Shopping List: {session_shopping_list}")
         if 'serpapiProductsComposition' in final_results:
             final_image = final_results['serpapiProductsComposition'].get('final_image', {})
             print(f"   🎨 Final Image: {final_image.get('filename', 'Unknown')}")
         
-        print(f"\n🌐 Open {shopping_list_file} in your browser to see the shopping list!")
+        # Create latest symlink for easy access
+        session.create_latest_symlink()
+        print(f"🔗 Latest session symlink created: output/sessions/latest")
+        
+        print(f"\n🌐 Open {session_shopping_list} in your browser to see the shopping list!")
         print("🎨 The final image shows your room with the real products integrated!")
         
     except Exception as e:
