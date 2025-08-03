@@ -145,7 +145,7 @@ class RealProductsPathway:
                     }
                 ],
                 # Optimize for speed in fast mode
-                "max_tokens": 1024 if self.fast_mode else 2048,
+                "max_tokens": 2048 if self.fast_mode else 3072,
                 "temperature": 0 if self.fast_mode else 0.7
             }
             
@@ -360,52 +360,19 @@ class RealProductsPathway:
             print("🔧 Preparing GPT Image 1 overlay request...")
             
             # Create the prompt for GPT Image 1
-            prompt = """You are an expert interior designer. 
-I have provided you with a composite image showing an existing room on the left side and product images to overlay into the room on the right side. 
+            prompt = """Overlay the product images from the right side into the room on the left side.
 
-The products on the right are organized by type (e.g., multiple throw pillows, multiple lamps, etc.). 
-Each row on the right side is a different product type.
-
-Your task is to intelligently select and integrate the best combination of products into the existing room.
-
-CRITICAL REQUIREMENTS:
-- You MUST select products from the right-hand side of the composite image
-- You are NOT allowed to alter, modify, or change the appearance of the selected products in any way
-- Products must be overlaid exactly as they appear in the product images
-- Do not change colors, textures, shapes, or any visual properties of the products
-- You should not alter the existing room conditions - keep walls, dimensions, and furniture placement unchanged
-- Your only goal is to select and place the products naturally into the room
-
-PRODUCT SELECTION STRATEGY:
-- Analyze all product options for each category on the right side
-- Select products that will work well together and enhance the room
-- Choose products that complement each other in style, color, and scale
-- Avoid overwhelming the space - select a balanced combination
-- Consider the existing room elements and choose products that enhance them
-- If multiple products of the same type exist, pick the one that best fits the room's style and color scheme
-- You have complete freedom to choose which products to include - focus on what works best for the room
-
-INTEGRATION REQUIREMENTS:
-- Place selected products naturally and realistically in the room
-- Maintain the original room's lighting, perspective, and style
-- Ensure products look like they belong in the space without altering their appearance
-- Create a cohesive, professional interior design
-- Preserve the room's existing architecture and layout
-- Make the final design look like professional interior photography
-- Work with existing elements - if the room already has suitable items, integrate new products to complement rather than replace them
-
-DESIGN PRINCIPLES:
-- Less is more - don't overcrowd the space
-- Choose products that create visual harmony
-- Consider scale and proportion
-- Ensure the final design feels intentional and curated
-- The result should look like a professionally designed room with carefully selected products naturally integrated
-- Remember: Select from the right side, place naturally, but never alter the products themselves"""
+Rules:
+- Keep the original room exactly as it is. Don't change dimensions or camera position.
+- Place products exactly as they appear in the product images
+- Do not change colors, shapes, or textures of products and original room
+- Choose a few products - as many as you think look good together
+- Place them in logical locations within the room"""
             
             # Apply fast mode optimizations for image generation
             if self.fast_mode:
                 print("   ⚡ Using fast mode optimizations for image generation")
-                input_fidelity = "medium"  # Use medium fidelity for faster processing
+                input_fidelity = "low"  # Use low fidelity for faster processing
             else:
                 input_fidelity = "high"  # Use high fidelity for better quality
             
@@ -701,6 +668,14 @@ DESIGN PRINCIPLES:
             
             # Create latest symlink for easy access
             session.create_latest_symlink()
+            
+            # Debug: Log the final product data structure
+            print(f"🔍 Final products_info structure:")
+            for i, product in enumerate(real_products_with_images):
+                print(f"   Product {i+1}: {product.get('name', 'Unknown')}")
+                print(f"      URL: {product.get('url', 'No URL')}")
+                print(f"      Image: {product.get('image_path', 'No image')}")
+                print(f"      Price: {product.get('price', 'No price')}")
             
             return {
                 'success': True,

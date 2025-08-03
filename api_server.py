@@ -36,7 +36,7 @@ app = FastAPI(
 # Add CORS middleware for frontend integration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001", "http://localhost:8080"],  # React dev server
+    allow_origins=["http://localhost:3000", "http://localhost:3001", "http://localhost:8080", "http://localhost:8081"],  # React dev server
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -199,6 +199,10 @@ async def generate_real_products_pathway(
         # Clean up temp file
         os.unlink(temp_path)
         
+        # Check if the result contains an error
+        if isinstance(results, dict) and "error" in results:
+            raise HTTPException(status_code=500, detail=results["error"])
+        
         if not results:
             raise HTTPException(status_code=500, detail="Real products pathway generation failed")
         
@@ -266,13 +270,14 @@ async def get_shopping_list(filename: str):
 
 @app.get("/images/{file_path:path}")
 async def get_image(file_path: str):
-    """Serve images from the serpapi_products directory"""
+    """Serve images from output directories"""
     try:
         # Construct the full path to the image
         image_path = os.path.join(os.getcwd(), file_path)
         
-        # Security check: ensure the path is within the serpapi_products directory
-        if not file_path.startswith('serpapi_products/'):
+        # Security check: ensure the path is within allowed directories
+        allowed_prefixes = ['serpapi_products/', 'output/sessions/', 'output/']
+        if not any(file_path.startswith(prefix) for prefix in allowed_prefixes):
             raise HTTPException(status_code=403, detail="Access denied")
         
         # Check if file exists
@@ -285,6 +290,10 @@ async def get_image(file_path: str):
             content_type = "image/png"
         elif file_path.lower().endswith('.jpg') or file_path.lower().endswith('.jpeg'):
             content_type = "image/jpeg"
+        elif file_path.lower().endswith('.gif'):
+            content_type = "image/gif"
+        elif file_path.lower().endswith('.webp'):
+            content_type = "image/webp"
         
         # Read and return the image
         with open(image_path, "rb") as f:

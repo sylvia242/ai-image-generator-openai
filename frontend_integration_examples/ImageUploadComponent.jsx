@@ -11,6 +11,7 @@ const ImageUploadComponent = () => {
   const [pathway, setPathway] = useState('standard'); // 'standard' or 'real-products'
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState(null);
+  const [analysisResults, setAnalysisResults] = useState(null); // For customize style screen
   const [error, setError] = useState(null);
 
   // Handle file selection
@@ -42,7 +43,7 @@ const ImageUploadComponent = () => {
 
   // Generate design
   const handleGenerate = async () => {
-    if (!selectedFile) {
+    if (!selectedFile && !analysisResults) {
       setError('Please select an image first');
       return;
     }
@@ -61,15 +62,26 @@ const ImageUploadComponent = () => {
           customInstructions
         );
       } else {
-        response = await aiImageAPI.generateRealProductsDesign(
-          selectedFile,
-          designStyle,
-          customInstructions
-        );
+        // For real products pathway, use existing analysis if available
+        if (analysisResults) {
+          response = await aiImageAPI.generateWithExistingAnalysis(
+            analysisResults.session_id,
+            analysisResults,
+            designStyle,
+            customInstructions
+          );
+        } else {
+          response = await aiImageAPI.generateRealProductsDesign(
+            selectedFile,
+            designStyle,
+            customInstructions
+          );
+        }
       }
 
       if (response.success) {
         setResults(response.data);
+        setAnalysisResults(null); // Clear analysis results after generation
       } else {
         setError(response.error || 'Generation failed');
       }
@@ -89,6 +101,7 @@ const ImageUploadComponent = () => {
 
     setLoading(true);
     setError(null);
+    setResults(null); // Clear any previous results
 
     try {
       const response = await aiImageAPI.analyzeImage(
@@ -98,7 +111,7 @@ const ImageUploadComponent = () => {
       );
 
       if (response.success) {
-        setResults({ analysis: response.data });
+        setAnalysisResults(response.data);
       } else {
         setError(response.error || 'Analysis failed');
       }
@@ -107,6 +120,14 @@ const ImageUploadComponent = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Reset to start over
+  const handleReset = () => {
+    setSelectedFile(null);
+    setAnalysisResults(null);
+    setResults(null);
+    setError(null);
   };
 
   return (
@@ -201,24 +222,125 @@ const ImageUploadComponent = () => {
         />
       </div>
 
-      {/* Action Buttons */}
-      <div className="flex gap-4 mt-6">
-        <button
-          onClick={handleAnalyze}
-          disabled={loading || !selectedFile}
-          className="flex-1 bg-green-500 text-white py-3 px-6 rounded font-semibold hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
-        >
-          {loading ? '🔍 Analyzing...' : '🔍 Analyze Only'}
-        </button>
-        
-        <button
-          onClick={handleGenerate}
-          disabled={loading || !selectedFile}
-          className="flex-1 bg-blue-500 text-white py-3 px-6 rounded font-semibold hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
-        >
-          {loading ? '🎨 Generating...' : '🎨 Generate Design'}
-        </button>
-      </div>
+      {/* Customize Style Screen - Show when we have analysis results */}
+      {analysisResults && !results && (
+        <div className="mt-6 p-6 bg-blue-50 border border-blue-200 rounded-lg">
+          <h3 className="text-xl font-bold mb-4 text-blue-800">🎨 Customize Your Design Style</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            {/* Room Analysis Summary */}
+            {analysisResults.roomAnalysis && (
+              <div className="bg-white p-4 rounded border">
+                <h4 className="font-semibold mb-2 text-gray-800">Room Analysis</h4>
+                <div className="text-sm space-y-1">
+                  <p><strong>Room Type:</strong> {analysisResults.roomAnalysis.roomType}</p>
+                  <p><strong>Current Style:</strong> {analysisResults.roomAnalysis.currentStyle}</p>
+                  <p><strong>Mood:</strong> {analysisResults.roomAnalysis.mood}</p>
+                </div>
+              </div>
+            )}
+            
+            {/* Recommendations Preview */}
+            {analysisResults.recommendations && (
+              <div className="bg-white p-4 rounded border">
+                <h4 className="font-semibold mb-2 text-gray-800">Recommended Items</h4>
+                <div className="text-sm">
+                  <ul className="list-disc list-inside space-y-1">
+                    {analysisResults.recommendations.slice(0, 4).map((rec, idx) => (
+                      <li key={idx}>{rec.type}</li>
+                    ))}
+                    {analysisResults.recommendations.length > 4 && (
+                      <li className="text-gray-500">...and {analysisResults.recommendations.length - 4} more</li>
+                    )}
+                  </ul>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="mb-6">
+            <p className="text-blue-700 mb-4">
+              💡 <strong>Perfect!</strong> We've analyzed your room. Now you can adjust the design style and add custom instructions before we find real products and generate your design.
+            </p>
+            
+            {/* Style and Instructions (repeated from above for easy editing) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Design Style
+                </label>
+                <select
+                  value={designStyle}
+                  onChange={(e) => setDesignStyle(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+                  disabled={loading}
+                >
+                  <option value="modern">Modern</option>
+                  <option value="scandinavian">Scandinavian</option>
+                  <option value="bohemian">Bohemian</option>
+                  <option value="industrial">Industrial</option>
+                  <option value="minimalist">Minimalist</option>
+                  <option value="traditional">Traditional</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Custom Instructions
+                </label>
+                <textarea
+                  value={customInstructions}
+                  onChange={(e) => setCustomInstructions(e.target.value)}
+                  placeholder="Add specific requirements..."
+                  className="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+                  rows="3"
+                  disabled={loading}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Action buttons for customize style screen */}
+          <div className="flex gap-4">
+            <button
+              onClick={handleReset}
+              className="flex-1 bg-gray-500 text-white py-3 px-6 rounded font-semibold hover:bg-gray-600"
+              disabled={loading}
+            >
+              🔄 Start Over
+            </button>
+            
+            <button
+              onClick={handleGenerate}
+              disabled={loading}
+              className="flex-2 bg-blue-600 text-white py-4 px-8 rounded-lg font-bold text-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed shadow-lg"
+            >
+              {loading ? '🛒 Generating Design...' : '🛒 Generate & Shop'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Action Buttons - Only show when no analysis results */}
+      {!analysisResults && (
+        <div className="flex gap-4 mt-6">
+          <button
+            onClick={handleAnalyze}
+            disabled={loading || !selectedFile}
+            className="flex-1 bg-green-500 text-white py-3 px-6 rounded font-semibold hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          >
+            {loading ? '🔍 Analyzing...' : '🔍 Analyze Only'}
+          </button>
+          
+          <button
+            onClick={handleGenerate}
+            disabled={loading || !selectedFile}
+            className="flex-1 bg-blue-500 text-white py-3 px-6 rounded font-semibold hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          >
+            {loading ? '🎨 Generating...' : '🎨 Generate Design'}
+          </button>
+        </div>
+      )}
 
       {/* Error Display */}
       {error && (
@@ -232,12 +354,24 @@ const ImageUploadComponent = () => {
         <div className="mt-8 p-6 bg-gray-50 rounded-lg">
           <h3 className="text-xl font-semibold mb-4">Results</h3>
           
+          {/* Show original image if available */}
+          {(analysisResults?.original_image || results.original_image) && (
+            <div className="mb-6">
+              <h4 className="font-medium mb-2">Original Image:</h4>
+              <img
+                src={aiImageAPI.getImageURL(analysisResults?.original_image || results.original_image)}
+                alt="Original uploaded image"
+                className="max-w-sm rounded border"
+              />
+            </div>
+          )}
+          
           {/* Analysis Results */}
-          {results.analysis && (
+          {analysisResults && (
             <div className="mb-6">
               <h4 className="font-medium mb-2">Image Analysis:</h4>
               <pre className="bg-white p-4 rounded border text-sm overflow-auto">
-                {JSON.stringify(results.analysis, null, 2)}
+                {JSON.stringify(analysisResults, null, 2)}
               </pre>
             </div>
           )}

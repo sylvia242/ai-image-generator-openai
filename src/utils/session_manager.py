@@ -139,10 +139,28 @@ class SessionManager:
     def create_latest_symlink(self):
         """Create symlink to latest session"""
         latest_path = Path(self.base_dir) / "sessions" / "latest"
+        
+        # Remove existing symlink or file if it exists
         if latest_path.exists():
-            latest_path.unlink()
-        latest_path.symlink_to(self.session_path, target_is_directory=True)
-        print(f"🔗 Created latest symlink: {latest_path} -> {self.session_path}")
+            try:
+                if latest_path.is_symlink():
+                    latest_path.unlink()
+                else:
+                    # If it's not a symlink, remove it safely
+                    if latest_path.is_dir():
+                        shutil.rmtree(latest_path)
+                    else:
+                        latest_path.unlink()
+            except Exception as e:
+                print(f"⚠️ Warning: Could not remove existing latest link: {e}")
+        
+        # Create new symlink
+        try:
+            latest_path.symlink_to(self.session_path, target_is_directory=True)
+            print(f"🔗 Created latest symlink: {latest_path} -> {self.session_path}")
+        except Exception as e:
+            print(f"⚠️ Warning: Could not create latest symlink: {e}")
+            # Don't fail the entire process if symlink creation fails
 
 
 def get_session_paths(session_id=None):

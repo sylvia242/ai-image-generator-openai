@@ -110,6 +110,12 @@ class SerpAPIShopping:
                 # Try alternative URL fields
                 product_url = item.get('link', '')
             
+            # Debug: Log URL extraction
+            print(f"   🔗 Product URL extraction for '{title}':")
+            print(f"      product_link: {item.get('product_link', 'None')}")
+            print(f"      link: {item.get('link', 'None')}")
+            print(f"      Final URL: {product_url}")
+            
             # Extract rating and reviews
             rating = item.get('rating')
             reviews = item.get('reviews')

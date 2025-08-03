@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontend-Backend Connection Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .status { padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Frontend-Backend Connection Test</h1>
+    <div id="results"></div>
+
+    <div class="test-section">
+        <h3>Test File Upload</h3>
+        <input type="file" id="testFile" accept="image/*">
+        <button onclick="testFileUpload()">Test File Upload</button>
+        <div id="uploadResults"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8000';
+        
+        async function testConnection() {
+            const resultsDiv = document.getElementById('results');
+            
+            try {
+                // Test health endpoint
+                const response = await fetch(`${API_BASE_URL}/health`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultsDiv.innerHTML = `
+                        <div class="status success">
+                            ✅ Backend API is running and healthy!
+                        </div>
+                        <div class="status info">
+                            <strong>API Status:</strong><br>
+                            • OpenAI API: ${data.data.openai_api}<br>
+                            • SerpAPI: ${data.data.serpapi}<br>
+                            • Timestamp: ${data.data.timestamp}
+                        </div>
+                        <div class="status success">
+                            🎉 CORS is configured correctly!<br>
+                            Frontend can now connect to the backend API.
+                        </div>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `
+                        <div class="status error">
+                            ❌ Backend API returned an error: ${data.error || 'Unknown error'}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="status error">
+                        ❌ Failed to connect to backend API: ${error.message}<br>
+                        Make sure the backend server is running on port 8000
+                    </div>
+                `;
+            }
+        }
+        
+        async function testFileUpload() {
+            const fileInput = document.getElementById('testFile');
+            const resultsDiv = document.getElementById('uploadResults');
+            
+            if (!fileInput.files[0]) {
+                resultsDiv.innerHTML = '<div class="status error">Please select a file first</div>';
+                return;
+            }
+            
+            try {
+                const formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+                formData.append('design_style', 'modern');
+                formData.append('custom_instructions', 'Test upload');
+                formData.append('design_type', 'interior redesign');
+                formData.append('fast_mode', 'true');
+                
+                resultsDiv.innerHTML = '<div class="status info">Testing file upload to backend...</div>';
+                
+                const response = await fetch(`${API_BASE_URL}/generate-real-products`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    resultsDiv.innerHTML = `
+                        <div class="status success">
+                            ✅ File upload successful!<br>
+                            Response: ${JSON.stringify(result, null, 2)}
+                        </div>
+                    `;
+                } else {
+                    const errorData = await response.json();
+                    resultsDiv.innerHTML = `
+                        <div class="status error">
+                            ❌ File upload failed: ${errorData.detail || 'Unknown error'}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="status error">
+                        ❌ File upload error: ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        // Run connection test when page loads
+        testConnection();
+    </script>
+</body>
+</html> 
