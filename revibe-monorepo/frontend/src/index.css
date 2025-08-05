@@ -1,0 +1,121 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* UpStaged Design System - Refined Terra Palm Springs High-End Palette */
+    --background: 35 20% 97%;              /* Warm cream white */
+    --foreground: 20 20% 15%;              /* Rich dark brown */
+
+    --card: 0 0% 100%;                     /* Pure white cards */
+    --card-foreground: 20 20% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 20% 15%;
+
+    --primary: 15 60% 50%;                 /* Refined terracotta */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 95 35% 40%;               /* Sophisticated sage */
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 30 15% 95%;                   /* Subtle warm background */
+    --muted-foreground: 20 15% 40%;
+
+    --accent: 25 45% 35%;                  /* Deep clay accent */
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 65% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 25 20% 90%;                  /* Warm light border */
+    --input: 30 15% 98%;                   /* Clean input background */
+    --ring: 15 60% 50%;                    /* Terracotta focus ring */
+    
+    /* Custom design tokens - High-end refinement */
+    --gradient-hero: linear-gradient(135deg, hsl(35 20% 97%), hsl(30 15% 95%));
+    --gradient-accent: linear-gradient(135deg, hsl(15 60% 50%), hsl(25 45% 35%));
+    --gradient-sage: linear-gradient(135deg, hsl(95 35% 40%), hsl(90 30% 45%));
+    --shadow-elegant: 0 20px 60px -10px hsl(20 20% 15% / 0.1);
+    --shadow-glow: 0 0 50px hsl(15 60% 50% / 0.15);
+    --shadow-premium: 0 8px 32px hsl(20 20% 15% / 0.08);
+    --transition-smooth: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 220 13% 9%;              /* Clean dark background */
+    --foreground: 210 40% 98%;             /* Clean light text */
+
+    --card: 220 13% 12%;                   /* Clean dark card */
+    --card-foreground: 210 40% 98%;
+
+    --popover: 220 13% 12%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 0 0% 100%;                  /* White primary for dark */
+    --primary-foreground: 220 13% 9%;
+
+    --secondary: 217 32% 17%;              /* Clean dark secondary */
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 32% 17%;                  /* Clean dark muted */
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 142 76% 36%;                 /* Bright sage for dark */
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 70% 65%;
+    --destructive-foreground: 220 13% 9%;
+
+    --border: 217 32% 17%;                 /* Clean dark border */
+    --input: 217 32% 17%;                  /* Clean dark input */
+    --ring: 142 76% 36%;                   /* Sage focus ring */
+    
+    /* Dark mode gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(220 13% 9%), hsl(217 32% 17%));
+    --gradient-accent: linear-gradient(135deg, hsl(0 0% 100%), hsl(142 76% 36%));
+    --shadow-elegant: 0 10px 30px -5px hsl(220 13% 5% / 0.5);
+    --shadow-glow: 0 0 40px hsl(142 76% 36% / 0.3);
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
