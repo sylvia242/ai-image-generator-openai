@@ -241,7 +241,7 @@ export const DesignStudio = () => {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between mb-3">
             <div>
-              <h1 className="text-3xl font-bold text-foreground mb-2">Transform your space</h1>
+              <h1 className="text-3xl font-bold text-foreground mb-2">Generate design for your space</h1>
               <p className="text-muted-foreground">Premium AI interior design service</p>
             </div>
             <div className="text-right">
@@ -532,7 +532,7 @@ export const DesignStudio = () => {
                     
                     {!isLoading && (
                       <div className="mt-4 text-sm text-muted-foreground">
-                        <p>✨ Ready to transform your space? Click the button above to start generating your design with real products!</p>
+                        <p>✨ Ready to generate design for your space? Click the button above to start generating your design with real products!</p>
                       </div>
                     )}
                     
@@ -822,7 +822,7 @@ export const DesignStudio = () => {
                         <Wand2 className="h-10 w-10 text-muted-foreground" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-semibold mb-2">Ready to Transform Your Space?</h3>
+                        <h3 className="text-xl font-semibold mb-2">Ready to Generate Design for Your Space?</h3>
                         <p className="text-muted-foreground mb-6">
                           Upload an image and click "Generate Design" to see your room with real products
                         </p>

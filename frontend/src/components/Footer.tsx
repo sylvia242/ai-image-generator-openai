@@ -11,7 +11,7 @@ export const Footer = () => {
               <span className="text-xl font-bold">UpStaged</span>
             </div>
             <p className="text-muted-foreground text-sm">
-              AI-powered interior design for everyone. Transform your space 
+              AI-powered interior design for everyone. Generate design for your space 
               with personalized, shoppable design solutions.
             </p>
           </div>

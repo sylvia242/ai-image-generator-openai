@@ -16,7 +16,7 @@ export const StartDesign = () => {
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-            Ready to Transform Your Space?
+            Ready to Generate Design for Your Space?
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Our AI design concierge will guide you through a personalized experience in just 3 simple steps
