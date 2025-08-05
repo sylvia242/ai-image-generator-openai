@@ -1,0 +1,29 @@
+{
+  "name": "ai-image-generator-monorepo",
+  "version": "1.0.0",
+  "description": "AI-powered interior design platform with real product recommendations - Monorepo",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "./quick-start.sh",
+    "start": "./quick-start.sh",
+    "frontend:dev": "cd frontend && npm run dev",
+    "backend:dev": "cd backend && python3 api_server.py",
+    "install:all": "npm install && cd frontend && npm install && cd ../backend && pip3 install -r requirements.txt",
+    "build": "cd frontend && npm run build",
+    "test": "echo 'Add test scripts here'"
+  },
+  "keywords": [
+    "ai",
+    "interior-design",
+    "react",
+    "fastapi",
+    "openai",
+    "monorepo"
+  ],
+  "author": "Sylvia Schumacher",
+  "license": "MIT"
+} 

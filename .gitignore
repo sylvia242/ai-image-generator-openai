@@ -1,3 +1,66 @@
+# API Keys and Secrets - CRITICAL SECURITY
+*.key
+*_key.txt
+*_key.json
+*api_key*
+*secret*
+*password*
+*token*
+*credential*
+config.py
+secrets.py
+.env
+.env.*
+!.env.example
+.env.local
+.env.production
+.env.development
+.env.test
+*.pem
+*.p12
+*.pfx
+*.crt
+*.key
+id_rsa
+id_rsa.pub
+*.pub
+
+# Files that might contain API keys
+quick-start.sh
+start_servers.sh
+start_backend.sh
+start_backend_with_keys_template.sh
+*_with_keys*
+*_template.sh
+
+# Output directories
+output/sessions/*/
+output/temp/*
+!output/sessions/.gitkeep
+!output/temp/.gitkeep
+
+# Keep only important archives
+output/archive/*
+!output/archive/README.md
+
+# Session-specific files
+**/serpapi_product_*.jpg
+**/composite_layout_*.png
+**/real_products_overlay_design_*.png
+**/design_results.json
+**/analysis_results.json
+
+# Debug outputs
+debug_output_*/
+**/debug_*.png
+**/debug_*.jpg
+**/debug_*.json
+
+# Temporary files
+*.tmp
+*.temp
+*_temp.*
+
 # Python
 __pycache__/
 *.py[cod]
@@ -44,11 +107,6 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
-
-# Environment variables
-.env
-.env.*
-!.env.example
 
 # Virtual environments
 .venv
@@ -102,39 +160,6 @@ temp_prepared_*.png
 # Cloned repository (we don't want to include this)
 fern-project-new-project-8370a695/
 
-# API keys and secrets
-.env.local
-.env.production
-.env.development
-*.key
-*_key.txt
-config.py 
-# Output directories
-output/sessions/*/
-output/temp/*
-!output/sessions/.gitkeep
-!output/temp/.gitkeep
-
-# Keep only important archives
-output/archive/*
-!output/archive/README.md
-
-# Session-specific files
-**/serpapi_product_*.jpg
-**/composite_layout_*.png
-**/real_products_overlay_design_*.png
-**/design_results.json
-**/analysis_results.json
-
-# Debug outputs
-debug_output_*/
-**/debug_*.png
-**/debug_*.jpg
-**/debug_*.json
-
-# Temporary files
-*.tmp
-*.temp
-*_temp.*
-
+# Old directories
 revibe-my-space/
+revibe-monorepo/

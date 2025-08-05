@@ -1,128 +1,98 @@
-# AI Image Generator
+# 🎨 AI Image Generator - Monorepo
 
-This Python script is based on the prompt structure from the HostLux AI Interior Design Platform. It uses OpenAI's GPT-4 Vision to analyze uploaded images and generate detailed design recommendations and transformations.
+An AI-powered interior design platform with real product recommendations, built as a proper monorepo.
 
-## Features
+## 🏗️ Project Structure
 
-- 🖼️ **Image Analysis**: Upload any image and get detailed AI analysis
-- 🎨 **Design Recommendations**: Get specific design transformation suggestions
-- 🎯 **Multiple Styles**: Support for various design styles (modern, rustic, minimalist, etc.)
-- 📊 **Structured Output**: Results in both human-readable format and JSON
-- ⚙️ **Customizable**: Add custom instructions and design preferences
-
-## Setup
-
-1. **Install Dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-2. **Setup OpenAI API Key**:
-   - Go to [OpenAI Platform](https://platform.openai.com/api-keys)
-   - Create a new API key
-   - Choose one of these setup methods:
-   
-   **Method 1: Config File (Easiest)**
-   ```bash
-   cp config_template.py config.py
-   # Edit config.py and uncomment/set the API_KEY variable
-   ```
-   
-   **Method 2: Environment Variable**
-   ```bash
-   export OPENAI_API_KEY="your_api_key_here"
-   ```
-
-## Usage
-
-### Quick Start
-```bash
-# Run examples interactively
-./scripts/run_examples.sh
-
-# Or run specific examples
-python3 examples/example_real_products.py
+```
+ai-image-generator-openai/
+├── frontend/          # React + TypeScript + Vite + shadcn/ui
+├── backend/           # FastAPI + Python + OpenAI API
+├── quick-start.sh     # One-click startup script
+├── package.json       # Workspace configuration
+├── requirements.txt   # Python dependencies
+├── api_server.py     # Main backend server
+└── README.md         # This file
 ```
 
-### Main Examples
+## 🚀 Quick Start
 
-#### **Real Products Pathway (SerpAPI products)**
+**One command to start everything:**
+
 ```bash
-python3 examples/example_real_products.py
+./quick-start.sh
 ```
 
-#### **Performance Tracking**
+Or use npm scripts:
 ```bash
-python3 examples/performance/test_performance_tracking.py
+npm run dev          # Start both servers
+npm run frontend:dev # Start frontend only
+npm run backend:dev  # Start backend only
 ```
 
-### API Server
+## 📦 Installation
+
 ```bash
+npm run install:all
+```
+
+This will install:
+- ✅ Node.js dependencies for frontend
+- ✅ Python dependencies for backend
+- ✅ All required packages and tools
+
+## 🌐 Access URLs
+
+Once running:
+- **Frontend**: http://localhost:8080/ (or detected port)
+- **Backend API**: http://localhost:8000
+- **API Documentation**: http://localhost:8000/docs
+
+## 🔧 Development
+
+### Frontend (React + TypeScript)
+```bash
+cd frontend
+npm run dev
+```
+
+### Backend (FastAPI + Python)
+```bash
+cd backend
 python3 api_server.py
 ```
 
-### Debug Image Generation
-```bash
-python3 tests/test_image_generation_debug.py
-```
+## 📋 Features
 
-### Fast Mode
-```bash
-# Quick processing with reduced quality
-python3 src/core/ai_image_generator.py your_image.jpg --fast
+- 🖼️ **AI Image Analysis**: Upload images for detailed design analysis
+- 🎨 **Design Recommendations**: Get specific transformation suggestions
+- 🛍️ **Real Product Integration**: SerpAPI-powered product recommendations
+- 🎯 **Multiple Styles**: Support for various design styles
+- ⚡ **Fast Development**: Hot reload for both frontend and backend
 
-# Full quality processing (default)
-python3 src/core/ai_image_generator.py your_image.jpg
-```
+## 🔑 API Keys
 
-See [FAST_MODE_GUIDE.md](FAST_MODE_GUIDE.md) for detailed information about fast mode.
+The quick-start script automatically sets:
+- **OpenAI API Key**: For AI image generation
+- **SerpAPI Key**: For product recommendations
 
-### Supported Design Styles
+## 🛠️ Tech Stack
 
-- modern
-- scandinavian
-- minimalist
-- rustic
-- industrial
-- bohemian
-- traditional
-- contemporary
-- farmhouse
-- mid-century
+**Frontend:**
+- React 18 + TypeScript
+- Vite (build tool)
+- shadcn/ui (components)
+- Tailwind CSS (styling)
+- React Router (navigation)
+- TanStack Query (data fetching)
 
-### Example Output
-
-The script provides:
-
-1. **Current State Analysis**: What the AI sees in your image
-2. **Design Concept**: Overall vision and style recommendations
-3. **Specific Recommendations**: Detailed suggestions with priorities
-4. **Transformation Summary**: Expected impact and changes
-
-## Original Prompt Source
-
-This script is based on the AI prompts found in the HostLux AI Interior Design Platform repository:
-- Repository: https://github.com/MarvinFernie/fern-project-new-project-8370a695.git
-- Original prompt structure from: `src/app/api/generate-design/route.ts`
-
-The original platform was designed for Airbnb interior design optimization, but this script generalizes the concept for any image analysis and design recommendations.
-
-## Requirements
-
+**Backend:**
+- FastAPI (API server)
 - Python 3.7+
-- Valid OpenAI API key
-- Internet connection for API calls
-- Supported image formats: JPG, JPEG, PNG, GIF, WebP
+- OpenAI API (AI generation)
+- SerpAPI (product search)
+- Uvicorn (ASGI server)
 
-## Error Handling
+## 📝 License
 
-The script includes comprehensive error handling for:
-- Invalid image files
-- Missing API keys
-- Network connectivity issues
-- API response errors
-- JSON parsing errors
-
-## License
-
-This script is based on the HostLux AI platform structure and is provided for educational and personal use. 
+MIT License - see LICENSE file for details. 
